@@ -1,0 +1,146 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    min-height: 2000px; /* For testing scroll */
+}
+
+/* Tab navigation styling */
+.tab-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+    overflow-x: auto; /* Allows horizontal scroll on mobile */
+    white-space: nowrap; /* Prevents wrapping of tabs */
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Keeps it above other elements */
+    width: 100%; /* Ensure it takes full width */
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.tab-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.tab-button.active {
+    border-bottom: 2px solid #007bff;
+}
+
+.tab-button:hover {
+    color: #007bff;
+}
+
+
+.category {
+    padding: 20px;
+}
+
+.resume-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.resume-item {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.resume-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+/* Style for text and tooltip */
+        .resume-item p {
+            cursor: pointer;
+            position: relative;
+            padding: 5px;
+        }
+
+        /* Tooltip for the message */
+        .resume-item p::after {
+            content: ''; /* Empty until click */
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        /* Tooltip will be shown after the user clicks */
+        .resume-item p.copied::after {
+            content: 'Copied!'; /* Message shown when clicked */
+            opacity: 1;
+            top: -40px; /* Move up slightly to create a smooth transition effect */
+        }
+.use-template-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.use-template-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
+    .resume-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tab-container {
+        justify-content: flex-start; /* Align tabs to the left */
+    }
+
+    .tab-button {
+        flex-basis: auto;
+        justify-content: center;
+    }
+
+    /* Hide icons on mobile */
+    .tab-button img {
+        display: none;
+    }
+}
