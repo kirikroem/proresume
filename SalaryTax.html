@@ -53,6 +53,11 @@
       font-size: 0.9rem;
       color: #555;
     }
+    .breakdown {
+      font-size: 0.95rem;
+      color: #333;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -70,6 +75,7 @@
     <button onclick="calculateTax()">Calculate Tax</button>
 
     <div class="result" id="result"></div>
+    <div class="breakdown" id="breakdown"></div>
 
     <div class="note">
       This calculator is built following the tax guideline provided by the <a href="chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/87cfea03-715c-416c-808f-10dd777b4b26" target="_blank">Cambodian General Department of Taxation (GDT)</a>.
@@ -89,32 +95,40 @@
 
       const salaryKHR = salaryUSD * exchangeRate;
       const deductionPerDependent = 150000;
-      const taxableSalary = salaryKHR - (deductionPerDependent * dependents);
+      const taxableSalary = Math.max(0, salaryKHR - (deductionPerDependent * dependents));
 
-      let taxRate = 0;
-      let deduction = 0;
+      const brackets = [
+        { limit: 1500000, rate: 0 },
+        { limit: 2000000, rate: 0.05 },
+        { limit: 8500000, rate: 0.10 },
+        { limit: 12500000, rate: 0.15 },
+        { limit: Infinity, rate: 0.20 }
+      ];
 
-      if (taxableSalary <= 1500000) {
-        taxRate = 0;
-        deduction = 0;
-      } else if (taxableSalary <= 2000000) {
-        taxRate = 0.05;
-        deduction = 75000;
-      } else if (taxableSalary <= 8500000) {
-        taxRate = 0.10;
-        deduction = 175000;
-      } else if (taxableSalary <= 12500000) {
-        taxRate = 0.15;
-        deduction = 600000;
-      } else {
-        taxRate = 0.20;
-        deduction = 1225000;
+      let previousLimit = 0;
+      let totalTax = 0;
+      let breakdownText = '';
+
+      for (let i = 0; i < brackets.length; i++) {
+        const bracket = brackets[i];
+        if (taxableSalary > previousLimit) {
+          const incomeInBracket = Math.min(taxableSalary, bracket.limit) - previousLimit;
+          const taxForBracket = incomeInBracket * bracket.rate;
+          totalTax += taxForBracket;
+
+          if (bracket.rate > 0) {
+            breakdownText += `KHR ${incomeInBracket.toLocaleString()} × ${bracket.rate * 100}% = KHR ${Math.round(taxForBracket).toLocaleString()}<br/>`;
+          }
+          previousLimit = bracket.limit;
+        } else {
+          break;
+        }
       }
 
-      const taxKHR = (taxableSalary * taxRate) - deduction;
-      const taxUSD = taxKHR / exchangeRate;
+      const taxUSD = totalTax / exchangeRate;
 
       document.getElementById('result').innerText = `Estimated Monthly Tax: $${taxUSD.toFixed(2)}`;
+      document.getElementById('breakdown').innerHTML = `<strong>Tax Breakdown:</strong><br/>` + breakdownText;
     }
   </script>
 </body>
