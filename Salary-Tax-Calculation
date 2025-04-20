@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cambodia Salary Tax Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f8f9fa;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #28a745;
+    }
+    .note {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cambodia Salary Tax Calculator</h2>
+    <label for="salary">Gross Monthly Salary (USD):</label>
+    <input type="number" id="salary" placeholder="e.g. 800" />
+
+    <label for="exchange">Exchange Rate (KHR per USD):</label>
+    <input type="number" id="exchange" placeholder="e.g. 4100" />
+
+    <label for="dependents">Number of Dependents:</label>
+    <input type="number" id="dependents" placeholder="e.g. 1" />
+
+    <button onclick="calculateTax()">Calculate Tax</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="note">
+      This calculator is built following the tax guideline provided by the <a href="chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.tax.gov.kh/u6rhf7ogbi6/gdtstream/87cfea03-715c-416c-808f-10dd777b4b26" target="_blank">Cambodian General Department of Taxation (GDT)</a>.
+    </div>
+  </div>
+
+  <script>
+    function calculateTax() {
+      const salaryUSD = parseFloat(document.getElementById('salary').value);
+      const exchangeRate = parseFloat(document.getElementById('exchange').value);
+      const dependents = parseInt(document.getElementById('dependents').value);
+
+      if (isNaN(salaryUSD) || isNaN(exchangeRate) || isNaN(dependents)) {
+        document.getElementById('result').innerText = 'Please fill in all fields correctly.';
+        return;
+      }
+
+      const salaryKHR = salaryUSD * exchangeRate;
+      const deductionPerDependent = 150000;
+      const taxableSalary = salaryKHR - (deductionPerDependent * dependents);
+
+      let taxRate = 0;
+      let deduction = 0;
+
+      if (taxableSalary <= 1500000) {
+        taxRate = 0;
+        deduction = 0;
+      } else if (taxableSalary <= 2000000) {
+        taxRate = 0.05;
+        deduction = 75000;
+      } else if (taxableSalary <= 8500000) {
+        taxRate = 0.10;
+        deduction = 175000;
+      } else if (taxableSalary <= 12500000) {
+        taxRate = 0.15;
+        deduction = 600000;
+      } else {
+        taxRate = 0.20;
+        deduction = 1225000;
+      }
+
+      const taxKHR = (taxableSalary * taxRate) - deduction;
+      const taxUSD = taxKHR / exchangeRate;
+
+      document.getElementById('result').innerText = `Estimated Monthly Tax: $${taxUSD.toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>
